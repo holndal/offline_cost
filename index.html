@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>還元額サーチ</title>
+  <meta name="description" content="ショップ名と金額から、一番お得な支払い方法（ポイント還元額）を探すオフライン対応アプリ" />
+  <meta name="theme-color" content="#0f766e" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="還元額サーチ" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>還元額サーチ</h1>
+    <p class="sub">ショップ名と金額から一番お得な支払い方法を探す</p>
+  </header>
+
+  <main class="container">
+    <section class="search-card" aria-label="検索">
+      <div class="field">
+        <label for="shop">ショップ名検索（カナ）</label>
+        <input
+          id="shop"
+          type="search"
+          inputmode="text"
+          autocomplete="off"
+          placeholder="例：スタバ / セブン / matsuya"
+        />
+      </div>
+      <div class="field">
+        <label for="price">値段（円）</label>
+        <input
+          id="price"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          step="1"
+          placeholder="例：1000"
+        />
+      </div>
+      <p class="hint" id="hint">ショップ名は部分一致で検索できます。全店対象（ALL）の支払い方法は常に表示されます。</p>
+    </section>
+
+    <section class="results" aria-label="結果" aria-live="polite">
+      <div class="results-head">
+        <span id="count" class="count"></span>
+        <span class="sort-note">ポイント還元額の大きい順</span>
+      </div>
+      <ul id="list" class="list"></ul>
+      <p id="empty" class="empty" hidden>該当する支払い方法が見つかりませんでした。</p>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span id="status" class="status">読み込み中…</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
