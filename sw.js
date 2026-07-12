@@ -1,12 +1,13 @@
 "use strict";
 
-const CACHE_NAME = "pwa-cost-v2";
+const CACHE_NAME = "pwa-cost-v3";
 const APP_SHELL = [
   "./",
   "index.html",
   "styles.css",
   "app.js",
   "shop.csv",
+  "aff.csv",
   "manifest.webmanifest",
   "icons/icon.svg",
   "icons/icon-192.png",

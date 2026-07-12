@@ -195,6 +195,25 @@ input::placeholder {
   overflow-wrap: anywhere;
 }
 
+.method-link {
+  color: var(--primary-dark);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.18em;
+}
+
+.method-link::after {
+  content: "↗";
+  margin-left: 0.18em;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+
+.method-link:focus-visible {
+  border-radius: 0.25rem;
+  outline: 3px solid rgba(245, 158, 11, 0.5);
+  outline-offset: 3px;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -346,6 +365,10 @@ input::placeholder {
   }
 
   .reward {
+    color: #5eead4;
+  }
+
+  .method-link {
     color: #5eead4;
   }
 }

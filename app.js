@@ -1,6 +1,7 @@
 "use strict";
 
 const SHOP_CSV_URL = "shop.csv";
+const AFF_CSV_URL = "aff.csv";
 const elements = {
   shop: document.getElementById("shop"),
   price: document.getElementById("price"),
@@ -12,6 +13,9 @@ const elements = {
 
 /** @type {Array<ShopRow>} */
 let rows = [];
+
+/** @type {Array<{aliases: string[], url: string}>} */
+let affiliates = [];
 
 /**
  * @typedef {object} ShopRow
@@ -124,6 +128,30 @@ function parseShopRows(csvText) {
   });
 }
 
+function parseAffiliateRows(csvText) {
+  return parseCsv(csvText)
+    .map((record) => {
+      const name = (record[0] ?? "").trim();
+      const url = (record[1] ?? "").trim();
+      const aliases = name
+        .split("/")
+        .map((alias) => normalizeText(alias))
+        .filter(Boolean);
+
+      return { aliases, url };
+    })
+    .filter((record) => record.aliases.length > 0 && record.url !== "");
+}
+
+function getAffiliateUrl(method) {
+  const normalizedMethod = normalizeText(method);
+  const match = affiliates.find((affiliate) =>
+    affiliate.aliases.some((alias) => alias === normalizedMethod),
+  );
+
+  return match?.url ?? "";
+}
+
 function formatYen(value) {
   return new Intl.NumberFormat("ja-JP", {
     maximumFractionDigits: 2,
@@ -185,6 +213,25 @@ function makeBadge(kind) {
   return `<span class="badge badge-match">MATCH</span>`;
 }
 
+function renderMethodName(row) {
+  const method = escapeHtml(row.method);
+  const url = getAffiliateUrl(row.method);
+
+  if (!url) {
+    return `<span class="method">${method}</span>`;
+  }
+
+  return `
+    <a
+      class="method method-link"
+      href="${escapeHtml(url)}"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="${method} の申込ページを別タブで開く"
+    >${method}</a>
+  `;
+}
+
 function render() {
   const query = normalizeText(elements.shop.value);
   const price = getPrice();
@@ -232,7 +279,7 @@ function render() {
       <li class="result-item ${row.all ? "" : "match"}">
         <div class="main-info">
           <div class="method-row">
-            <span class="method">${escapeHtml(row.method)}</span>
+            ${renderMethodName(row)}
             ${makeBadge(row.all ? "all" : "match")}
           </div>
           <div class="shop">${escapeHtml(row.shop)}（検索用: ${escapeHtml(row.searchable)}）</div>
@@ -266,18 +313,33 @@ function setStatus(message, kind = "") {
 
 async function init() {
   try {
-    const response = await fetch(SHOP_CSV_URL, { cache: "no-cache" });
-    if (!response.ok) {
-      throw new Error(`shop.csvの読み込みに失敗しました (${response.status})`);
+    const [shopResponse, affResponse] = await Promise.all([
+      fetch(SHOP_CSV_URL, { cache: "no-cache" }),
+      fetch(AFF_CSV_URL, { cache: "no-cache" }),
+    ]);
+
+    if (!shopResponse.ok) {
+      throw new Error(`shop.csvの読み込みに失敗しました (${shopResponse.status})`);
     }
-    const csvText = await response.text();
-    rows = parseShopRows(csvText);
+    if (!affResponse.ok) {
+      throw new Error(`aff.csvの読み込みに失敗しました (${affResponse.status})`);
+    }
+
+    const [shopCsvText, affCsvText] = await Promise.all([
+      shopResponse.text(),
+      affResponse.text(),
+    ]);
+    rows = parseShopRows(shopCsvText);
+    affiliates = parseAffiliateRows(affCsvText);
 
     elements.shop.addEventListener("input", render);
     elements.price.addEventListener("input", render);
 
     render();
-    setStatus(`準備完了: ${rows.length}件の支払い方法を読み込みました`, "ok");
+    setStatus(
+      `準備完了: ${rows.length}件の支払い方法 / ${affiliates.length}件のリンクを読み込みました`,
+      "ok",
+    );
   } catch (error) {
     console.error(error);
     setStatus(error instanceof Error ? error.message : "読み込みに失敗しました", "warn");
