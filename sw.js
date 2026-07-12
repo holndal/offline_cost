@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "pwa-cost-v1";
+const CACHE_NAME = "pwa-cost-v2";
 const APP_SHELL = [
   "./",
   "index.html",

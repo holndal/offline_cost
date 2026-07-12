@@ -130,6 +130,10 @@ function formatYen(value) {
   }).format(round2(value));
 }
 
+function formatInt(value) {
+  return String(Math.trunc(value));
+}
+
 function round2(value) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
@@ -143,7 +147,7 @@ function formatPercent(value) {
 function calculateReward(row, price) {
   const baseReward = (price * row.rate) / 100;
   const stepCount = row.truncateUnit > 0 ? Math.floor(price / row.truncateUnit) : 0;
-  const stepReward = (stepCount * 100 * row.truncateRate) / 100;
+  const stepReward = (stepCount * row.truncateUnit * row.truncateRate) / 100;
   const reward = baseReward + stepReward;
   const effectiveRate = price > 0 ? (reward / price) * 100 : 0;
 
@@ -210,10 +214,19 @@ function render() {
 
   elements.list.innerHTML = results.map((row) => {
     const calc = row.calculation;
-    const formula = [
-      `通常: ${formatYen(price)} × ${formatPercent(row.rate)} = ${formatYen(calc.baseReward)}円`,
-      `切捨: floor(${formatYen(price)} / ${formatYen(row.truncateUnit)}) × 100 × ${formatPercent(row.truncateRate)} = ${formatYen(calc.stepReward)}円`,
-    ].join(" / ");
+    const parts = [];
+    if (row.rate !== 0) {
+      parts.push(
+        `通常: ${formatYen(price)} × ${formatPercent(row.rate)} = ${formatYen(calc.baseReward)}円`,
+      );
+    }
+    if (row.truncateRate !== 0 && row.truncateUnit > 0) {
+      parts.push(
+        `切捨: ${formatInt(price)}//${formatInt(row.truncateUnit)} × ${formatInt(row.truncateUnit)} × ${formatPercent(row.truncateRate)} = ${formatYen(calc.stepReward)}円`,
+      );
+    }
+    const formula = parts.join(" / ");
+    const formulaHtml = formula ? `<div class="formula">${formula}</div>` : "";
 
     return `
       <li class="result-item ${row.all ? "" : "match"}">
@@ -223,7 +236,7 @@ function render() {
             ${makeBadge(row.all ? "all" : "match")}
           </div>
           <div class="shop">${escapeHtml(row.shop)}（検索用: ${escapeHtml(row.searchable)}）</div>
-          <div class="formula">${formula}</div>
+          ${formulaHtml}
         </div>
         <div class="reward-box" aria-label="還元額">
           <div>
