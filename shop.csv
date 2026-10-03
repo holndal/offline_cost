@@ -1,12 +1,11 @@
 お店,検索用,還元率,切り捨て,切り捨て単位,支払方法
-ALL,ALL,2.1,1,100,楽天ペイ
 ALL,ALL,2.1,0,100,Pasmo
 ALL,ALL,2.1,0,100,バニラVisa
-ALL,ALL,2.1,0.5,200,楽天Edy
-ALL,ALL,1.6,1,100,WAON
-ALL,ALL,1.6,0.5,200,ANA Pay
-ALL,ALL,1.6,0.5,200,au Pay
-ALL,ALL,1.5,0.1,1000,JAL Pay
+ALL,ALL,1.6,0.5,200,楽天Edy
+ALL,ALL,1.1,1,100,WAON
+ALL,ALL,1.1,0.5,200,ANA Pay
+ALL,ALL,1.1,0.5,200,au Pay
+ALL,ALL,1,0.1,1000,JAL Pay
 ALL,ALL,0,2,100,楽天カード
 ALL,ALL,0,1,200,PayPay
 ALL,ALL,0,1.5,200,PayPay カード
@@ -15,7 +14,7 @@ ALL,ALL,0,0.5,200,三井住友カード/olive
 ALL,ALL,0,0.5,200,イオンカード
 ALL,ALL,0,1.75,100,d払い
 ALL,ALL,0,3.25,100,d払い(~33333)
-ALL,ALL,1.6,0.5,200,VポイントPay
+ALL,ALL,1.1,0.5,200,VポイントPay
 ALL,ALL,0,0.5,200,グローバルポイント
 coke on,コークオン,0,10,100,三菱UFJカード
 アオキスーパー,アオキスーパー,0,10,100,三菱UFJカード
